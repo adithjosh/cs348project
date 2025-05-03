@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>MLS Dashboard</title>
+</head>
+<body>
+    <h1>MLS Player Dashboard</h1>
+
+    <h2>Add New Player</h2>
+    <form action="{{ url_for('add_player') }}" method="POST">
+        <input type="text" name="player" placeholder="Player Name" required><br>
+        {% for column in Player.__table__.columns if column.name != 'player' %}
+            <label>{{ column.name.replace('_', ' ').title() }}:</label>
+            {% if column.type.python_type == int or column.type.python_type == float %}
+                <input type="number" step="any" name="{{ column.name }}" placeholder="{{ column.name }}"><br>
+            {% else %}
+                <input type="text" name="{{ column.name }}" placeholder="{{ column.name }}"><br>
+            {% endif %}
+        {% endfor %}
+        <button type="submit">Add Player</button>
+    </form>
+
+    <h2>Add New Goalkeeper</h2>
+    <form action="{{ url_for('add_gk') }}" method="POST">
+        <input type="text" name="player" placeholder="Player Name" required><br>
+        {% for column in Goalkeeper.__table__.columns if column.name != 'player' %}
+            <label>{{ column.name.replace('_', ' ').title() }}:</label>
+            {% if column.type.python_type == int or column.type.python_type == float %}
+                <input type="number" step="any" name="{{ column.name }}" placeholder="{{ column.name }}"><br>
+            {% else %}
+                <input type="text" name="{{ column.name }}" placeholder="{{ column.name }}"><br>
+            {% endif %}
+        {% endfor %}
+        <button type="submit">Add Goalkeeper</button>
+    </form>
+
+    <h2>Current Players</h2>
+    <ul>
+        {% for p in players %}
+            <li>{{ p.player }} - {{ p.team }} - {{ p.position }}
+                <form action="{{ url_for('delete_player', player=p.player) }}" method="post" style="display:inline;">
+                    <button type="submit">Delete</button>
+                </form>
+                <a href="{{ url_for('edit_player', player_name=p.player) }}">Edit</a>
+            </li>
+        {% endfor %}
+    </ul>
+
+    <h2>Current Goalkeepers</h2>
+    <ul>
+        {% for gk in gks %}
+            <li>
+                <strong>{{ gk.player }}</strong><br>
+                {% for column in Goalkeeper.__table__.columns if column.name != 'player' %}
+                    {{ column.name.replace('_', ' ').title() }}: {{ gk.__dict__[column.name] if gk.__dict__[column.name] is not none else 'N/A' }}<br>
+                {% endfor %}
+                <a href="{{ url_for('edit_goalkeeper', player_name=gk.player) }}">Edit</a>
+            </li>
+        {% else %}
+            <li>No goalkeepers available.</li>
+        {% endfor %}
+    </ul>
+</body>
+</html>

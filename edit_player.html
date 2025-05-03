@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Edit Player</title>
+</head>
+<body>
+    <h1>Edit Player: {{ player.player }}</h1>
+    <form method="POST">
+        {% for column in Player.__table__.columns if column.name != 'player' %}
+            <label>{{ column.name.replace('_', ' ').title() }}</label><br>
+            {% set value = getattr(player, column.name) %}
+            {% if column.type.python_type == int or column.type.python_type == float %}
+                <input type="number" name="{{ column.name }}" value="{{ value if value is not none else '' }}" step="any"><br>
+            {% else %}
+                <input type="text" name="{{ column.name }}" value="{{ value or '' }}"><br>
+            {% endif %}
+        {% endfor %}
+        <button type="submit">Update</button>
+    </form>
+    <a href="{{ url_for('index') }}">Back to Home</a>
+</body>
+</html>

@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Report</title>
+</head>
+<body>
+    <h1>Report</h1>
+    <form method="get">
+        <label>Team:</label>
+        <select name="team">
+            <option value="">All</option>
+            {% for team in teams %}
+                <option value="{{ team[0] }}" {% if team[0] == request.args.get('team') %}selected{% endif %}>{{ team[0] }}</option>
+            {% endfor %}
+        </select>
+
+        <label>Position:</label>
+        <select name="position">
+            <option value="">All</option>
+            {% for pos in positions %}
+                <option value="{{ pos[0] }}" {% if pos[0] == request.args.get('position') %}selected{% endif %}>{{ pos[0] }}</option>
+            {% endfor %}
+        </select>
+
+        <label>Columns to Display:</label><br>
+        {% for column in player_columns %}
+            <input type="checkbox" name="columns" value="{{ column }}" {% if column in selected_columns %}checked{% endif %}> {{ column.replace('_', ' ').title() }}<br>
+        {% endfor %}
+        {% if table_type == 'goalkeepers' %}
+            {% for column in goalkeeper_columns if column != 'player' %}
+                <input type="checkbox" name="columns" value="{{ column }}" {% if column in selected_columns %}checked{% endif %}> {{ column.replace('_', ' ').title() }}<br>
+            {% endfor %}
+        {% endif %}
+        <br>
+        <button type="submit">Generate Report</button>
+    </form>
+
+    {% if results %}
+        <h2>Results</h2>
+        <table border="1">
+            <thead>
+                <tr>
+                    {% for col in selected_columns %}
+                        <th>{{ col.replace('_', ' ').title() }}</th>
+                    {% endfor %}
+                </tr>
+            </thead>
+            <tbody>
+                {% for row in results %}
+                    <tr>
+                        {% for cell in row %}
+                            <td>{{ cell }}</td>
+                        {% endfor %}
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% endif %}
+    {% if stats %}
+    <h2>Statistics</h2>
+    <ul>
+        {% for col, avg in stats.items() %}
+            <li><strong>{{ col.replace('_', ' ').title() }}</strong>: Average = {{ avg }}</li>
+        {% endfor %}
+    </ul>
+{% endif %}
+
+</body>
+</html>
