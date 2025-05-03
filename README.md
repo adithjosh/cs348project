@@ -1,1 +1,1 @@
-Replit link: https://replit.com/join/ogmdlxwfis-ajoshg24
+Replit link: https://cs-348-project-ajoshg24.replit.app/
